@@ -65,13 +65,13 @@ var height = window.innerHeight
 		.flex-heading {
 	    /* width: 100px; */
 	    /* height: 15px; */
-	    background-color: lightgreen;
+	    /*background-color: lightgreen;*/
 	    align-content: center;
 		}
 		.flex-calculator {
 	     width: 325px; 
 	    /* height: 15px; */
-	    background-color: lightgreen;
+	    /*background-color:l ightgreen;*/
 	    margin: 5px 5px 5px 5px;
 	    padding: 3px;
 	    border: 3px solid gray;
@@ -86,7 +86,7 @@ var height = window.innerHeight
 		$(document).ready( function () {
 			storedjsonData = JSON.parse( localStorage.getItem( 'FXTDashboard2'));
 			if (storedjsonData === null) {
-				storedjsonData = {pageTitle: 'Forex Dashboard', titleColor: 'lightgreen',
+				storedjsonData = {pageTitle: 'Forex Dashboard', backgroundColor: 'lightgreen',
 					iframes: [
 						// {row:1, column:1, heading: 'CHG Intranet', uri: 'http://intranet.chghealthcare.com', height: 900, width: 600}
 						{row:1, column:1, heading: 'Forex Live .com', uri: 'http://www.forexlive.com', height: 900, width: 411, display: true}
@@ -110,6 +110,18 @@ var height = window.innerHeight
 		function buildPage( jsonData) {
 			document.getElementById('pageTitle').innerHTML = jsonData.pageTitle;
 			document.getElementById('editPageTitle').value = jsonData.pageTitle;
+			document.getElementById('backgroundColor').value = jsonData.backgroundColor;
+			document.getElementById( 'colorSample').style.backgroundColor = jsonData.backgroundColor;
+			var ss = document.styleSheets;
+			for (var s=0; s<ss.length; s++) {
+				if (ss[s].href === null) { // internal css
+					for (var c=0; c < ss[s].cssRules.length; c++) {
+						if (ss[s].cssRules[c].selectorText === '.flex-heading' || ss[s].cssRules[c].selectorText === '.flex-calculator') {
+							ss[s].cssRules[c].style.backgroundColor = jsonData.backgroundColor;
+						}
+					}
+				} 
+			}
 
 			var alliframes = document.getElementById('alliframes');
 			// Initialize alliframes div for rebuild
@@ -347,6 +359,7 @@ var height = window.innerHeight
 			// Loop through edited values and save them into JSON object.
 			var jsonData = {};
 			jsonData.pageTitle = document.getElementById( 'editPageTitle').value;
+			jsonData.backgroundColor = document.getElementById('backgroundColor').value;
 			jsonData.iframes = [];
 			// heading, uri, height, width
 			let iframe = {};
@@ -466,6 +479,10 @@ var height = window.innerHeight
 				document.getElementById( 'takeProfit').innerHTML = tpp;
 			}
 		}		
+
+		function changeSampleColor( color) {
+			document.getElementById( 'colorSample').style.backgroundColor = color;
+		}
 	</script>
 </head>
 
@@ -486,8 +503,24 @@ var height = window.innerHeight
 
 		<div class="flex-container">
 			<div class="flex-item editHide" id="editPageTitleDiv">
-					<label>Page Title:&nbsp;</label>
-					<input id="editPageTitle" type="text"/>
+				<label>Page Title:&nbsp;</label>
+				<input id="editPageTitle" type="text"/>
+				<label>Background Color:&nbsp;</label>
+				<select id="backgroundColor" onchange="changeSampleColor( this.value)">
+					<option value="lavender">lavender</option>
+					<option value="lemonchiffon">lemonchiffon</option>
+					<option value="lightblue">lightblue</option>
+					<option value="lightcoral">lightcoral</option>
+					<option value="lightgray">lightgray</option>
+					<option value="lightgreen">lightgreen</option>
+					<option value="lightpink">lightpink</option>
+					<option value="lightsalmon">lightsalmon</option>
+					<option value="lightseagreen">lightseagreen</option>
+					<option value="lightskyblue">lightskyblue</option>
+					<option value="lightsteelblue">lightsteelblue</option>
+					<option value="lightyellow">lightyellow</option>
+				</select>
+				<span id="colorSample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 			</div>
 		</div> <!-- end flex-container -->
 
