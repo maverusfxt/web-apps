@@ -94,6 +94,8 @@ var height = window.innerHeight
 						,{row:1, column:3, heading: 'Open Currency Positions', uri: 'https://market24hclock.com/Technical/Forex-Open-Positions', height: 700, width: 411, display: true}
 						,{row:2, column:1, heading: 'FXChoice Trade Account', uri: 'https://my.myfxchoice.com/webterminal', height: 700, width: 800, display: false}
 						,{row:2, column:2, heading: 'FXChoice Trade Account', uri: 'https://my.myfxchoice.com/webterminal', height: 700, width: 800, display: false}
+						,{row:3, column:1, heading: 'Cashback Forex', uri: 'https://www.cashbackforex.com/en-us/cashboard.aspx', height: 700, width: 624, display: true}
+						,{row:3, column:2, heading: 'Trade School Chat', uri: 'https://secureonlinetradinguniversity.com/chat-room', height: 700, width: 624, display: true}
 						]};
 			}
 			buildPage( storedjsonData);
@@ -334,6 +336,11 @@ var height = window.innerHeight
 				editiframeDiv.classList.remove('editHide');
 				let alliframesDiv = document.getElementById( "alliframes");
 				alliframesDiv.classList.value = 'editHide';
+				let div = document.getElementById( "calculatorHeading");
+				div.classList.value = 'editHide';
+				div = document.getElementById( "calculators");
+				div.classList.value = 'editHide';
+
 			} else {
 				$("#toggleEdit").val( "Edit Content");
 				let temp = document.getElementById('editPageTitleDiv').classList;
@@ -342,6 +349,10 @@ var height = window.innerHeight
 				editiframeDiv.classList.value = 'editHide';
 				let alliframesDiv = document.getElementById( "alliframes");
 				alliframesDiv.classList.remove( 'editHide');
+				let div = document.getElementById( "calculatorHeading");
+				div.classList.value = 'flex-container';
+				div = document.getElementById( "calculators");
+				div.classList.value = 'flex-container';
 				saveContent();
 			}
 		}
@@ -450,6 +461,7 @@ var height = window.innerHeight
 		}
 
 		function calcPriceAvg() {
+			document.getElementById( 'paMessage').innerHTML = '&nbsp;';
 			let tt = document.getElementById( 'longShort').value;
 			let fe = document.getElementById( 'firstEntry').value;
 			let pae = document.getElementById( 'avgEntry').value;
@@ -475,6 +487,13 @@ var height = window.innerHeight
 				}
 
 				document.getElementById( 'priceDifference').innerHTML = diff;
+				if (diff < 0) {
+					if (tt == 'Long') {
+						document.getElementById( 'paMessage').innerHTML = 'Long trade Price Average Entry price must be below First Trade Entry price.';
+					} else {
+						document.getElementById( 'paMessage').innerHTML = 'Short trade Price Average Entry price must be above First Trade Entry price.';
+					}
+				}
 				document.getElementById( 'halfway').innerHTML = halfway;
 				document.getElementById( 'takeProfit').innerHTML = tpp;
 			}
@@ -553,13 +572,13 @@ var height = window.innerHeight
 		</div> <!-- end editiframes flex-container -->
 
 <!--*************************************************************************************-->
-			<div class="flex-container" id='calculators'>
+			<div class="flex-container" id='calculatorHeading'>
 				<div class="flex-item">
 					<h3>Calculators</h3>
 				</div>
 			</div>
 
-			<div class="flex-container">
+			<div class="flex-container" id="calculators">
 				<div class="flex-calculator">
 					<h4>Lot Size Based on Percent of Account Risk</h4>
 					<p>
@@ -612,12 +631,12 @@ var height = window.innerHeight
 					<span id="riskAmtPOA"></span>
 					<br>
 
-					<label for="pipValuePOA">Pip Dollar Value:</label>
-					<input id="pipValuePOA" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
-					<br>
-
 					<label for="calculatedLotPOA">Lot Size:</label>
 					<b style="background-color: yellow;"><span id="calculatedLotPOA"></span></b>
+					<br>
+
+					<label for="pipValuePOA">Pip Dollar Value:</label>
+					<input id="pipValuePOA" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
 					<br>
 
 					<label for="profitGoalPctPOA">Daily Profit Goal Percent:</label>
@@ -625,7 +644,7 @@ var height = window.innerHeight
 					<br/>
 		
 					<label for="pipsNeededPOA">Pips needed to reach <span id="pctTextPOA"></span>% goal (<span id="dollarGoalPOA"></span>):</label>
-					<br>
+					<!-- <br> -->
 			
 					<b><span id="pipsNeededPOA"></span></b>
 					<br>
@@ -635,9 +654,9 @@ var height = window.innerHeight
 				<!-- Price Average Calculator -->
 				<div class="flex-calculator">
 					<h4>Calculate Price Average Trade</h4>
-					<br>
+					<p id='paMessage'>&nbsp;</p>
 					<label for="longShort">Trade Type:</label>
-					<select id="longShort">
+					<select id="longShort" onblur="calcPriceAvg()">
 						<option value="Long">Long</option>
 						<option value="Short">Short</option>
 					</select>
@@ -658,7 +677,7 @@ var height = window.innerHeight
 					<span id="halfway"></span>
 					<br>
 					<label for="takeProfit" id="paTakeProfit">Take Profit Price:</label>
-					<span id="takeProfit"></span>
+					<span id="takeProfit" style='background-color: yellow;'></span>
 					<br>
 					<input type="button" value="Calculate" onclick="calcPriceAvg()"/>
 
