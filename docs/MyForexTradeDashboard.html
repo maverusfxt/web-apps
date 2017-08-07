@@ -55,6 +55,15 @@
 	    border: 3px solid gray;
 	    /*align-content: center;*/
 		}
+		.flex-calc-left {
+			/*width: 200px;*/
+			/*margin: 5px;*/
+		}
+		.flex-calc-right {
+			/*width: 100px;*/
+			/*margin: 5px;*/
+			float: right;
+		}
 		iframe {
 			border: 3px solid gray;
 		}
@@ -160,6 +169,20 @@
 					<span id="riskAmt"></span>
 					<br>
 	
+					<label>Quote Currency:&nbsp;</label>
+					<select id="currencyPair" onchange="getCurrencyConversion( this.value, 'pipValue', 'qcRate1')">
+						<option value="AUD">AUD</option>
+						<option value="CAD">CAD</option>
+						<option value="CHF">CHF</option>
+						<option value="EUR">EUR</option>
+						<option value="GBP">GBP</option>
+						<option value="JPY">JPY</option>
+						<option value="NZD">NZD</option>
+						<option value="USD" selected="selected">USD</option>
+					</select>
+					&nbsp;<span id='qcRate1'>1.00</span>
+					<br/>
+
 					<label for="pipValue">Pip Dollar Value:</label>
 					<input id="pipValue" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
 					<br/>
@@ -199,8 +222,22 @@
 					<b style="background-color: yellow;"><span id="calculatedLotPOA"></span></b>
 					<br>
 
+					<label>Quote Currency:&nbsp;</label>
+					<select id="currencyPair" onchange="getCurrencyConversion( this.value, 'pipValuePOA', 'qcRate2')">
+						<option value="AUD">AUD</option>
+						<option value="CAD">CAD</option>
+						<option value="CHF">CHF</option>
+						<option value="EUR">EUR</option>
+						<option value="GBP">GBP</option>
+						<option value="JPY">JPY</option>
+						<option value="NZD">NZD</option>
+						<option value="USD" selected="selected">USD</option>
+					</select>
+					&nbsp;<span id='qcRate2'>1.00</span>
+					<br/>
+
 					<label for="pipValuePOA">Pip Dollar Value:</label>
-					<input id="pipValuePOA" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
+					<input id="pipValuePOA" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcProfitPipsPOA()"/>
 					<br>
 
 					<label for="profitGoalPctPOA">Daily Profit Goal Percent:</label>
@@ -246,7 +283,6 @@
 					<input type="button" value="Calculate" onclick="calcPriceAvg()"/>
 
 				</div>
-
 			</div>
 
 		<br>
