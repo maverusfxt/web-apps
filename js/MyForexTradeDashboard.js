@@ -300,10 +300,10 @@ function buildJSON () {
 		if (input.id === 'row' || input.id === 'column') { // input element
 			iframe[ input.id] = input.innerHTML;
 		}
-		if ( input.id === 'display') { // input element
-			iframe[ input.id] = input.checked;
+		if ( input.id.includes( 'display')) { // input element
+			iframe[ 'display'] = input.checked;
 		}
-		if (input.id === 'display' && iframe.heading !== '') {
+		if (input.id.includes( 'display') && iframe.heading !== '') {
 			jsonData.iframes.push( iframe);
 			iframe = {};
 		}
