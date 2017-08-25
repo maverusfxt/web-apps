@@ -43,7 +43,7 @@ function buildPage( jsonData) {
 	document.getElementById('pageTitle').innerHTML = jsonData.pageTitle;
 	document.getElementById('editPageTitle').value = jsonData.pageTitle;
 	document.getElementById('backgroundColor').value = jsonData.backgroundColor;
-	document.getElementById( 'colorSample').style.backgroundColor = jsonData.backgroundColor;
+	// document.getElementById( 'colorSample').style.backgroundColor = jsonData.backgroundColor;
 
 	// Go through the internal styles and set the background color of the heading and calulators
 	// to the selected color.
@@ -313,6 +313,7 @@ function buildJSON () {
 
 // Lot Size Calcs
 function calcLotSizeAcctRisk() {
+	checkForNewRates();
 	var freeMargin = $('#freeMargin').val();
 	var stopPips = $("#stopPips").val();
 	var riskPct = $("#riskPct").val() * .01;
@@ -348,13 +349,15 @@ function calcProfitPips() {
 }
 
 function calcLotSizePOA() {
+	checkForNewRates();
 	var freeMargin = $('#freeMarginPOA').val();
 	var acctPct = $("#acctPctPOA").val() * .01;
 	var acctAmt = (freeMargin * acctPct).toFixed(2);
 	var pipValue = $("#pipValuePOA").val();
 
 	if (freeMargin > 0 && acctPct > 0 && pipValue > 0) {
-		var lotSize = (freeMargin * (acctPct*.01)); // / (pipValue / 1);
+		//var lotSize = (freeMargin * (acctPct*.01)); // / (pipValue / 1);
+		var lotSize = (freeMargin * acctPct) / (10 * pipValue);
 		$("#calculatedLotPOA").html( lotSize.toFixed(2));
 		$('#riskAmtPOA').html( '$' + acctAmt);
 	} else {
@@ -427,9 +430,9 @@ function calcPriceAvg() {
 	}
 }		
 
-function changeSampleColor( color) {
-	document.getElementById( 'colorSample').style.backgroundColor = color;
-}
+// function changeSampleColor( color) {
+	// document.getElementById( 'colorSample').style.backgroundColor = color;
+// }
 
 function resetDefaultData() {
 	localStorage.removeItem( 'FXTDashboard2');
@@ -440,6 +443,8 @@ function resetDefaultData() {
 }
 
 function getAllConversions() {
+	// Save the date & time of when rates were retrieved.
+	currencyDate = new Date();
 	// Build a list of sybols from the select list.
 	var quotePairs = [];
 	let opts = document.getElementById('currencyPair').options;
@@ -459,7 +464,16 @@ function getAllConversions() {
   request.send(null);
 }
 
+function checkForNewRates() {
+	// If it has been more than 6 hours since the last exchange rate get, update it.
+	if (currencyDate.getDate() !== new Date().getDate()
+		|| new Date().getHours() - currencyDate.getHours() >= 6) {
+		getAllConversions();
+	}
+}
+
 function getCurrencyConversion( quotePair, pipID, rateID) {
+	checkForNewRates();
 	if (quotePair == 'USD') {
 		document.getElementById(pipID).value = 10;
 		if (pipID === 'pipValuePOA') {
