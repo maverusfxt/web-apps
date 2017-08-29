@@ -82,7 +82,7 @@
 			<!-- Edit & Add content buttons -->
 			<div class="flex-item" style="margin-top: 20px; margin-left: auto;">
 				<input id="toggleEdit" type="button" value="Edit Content" title="Edit page details (title, URI, size)" onclick="toggleEdit();" />
-				<!-- <input id="addiframe" type="button" value="+" title="Add Page" onclick="addiframe();" /> -->
+				<input class="editHide" id="cancelEdit" type="button" value="Cancel Edit" onclick="removeEdit();" />
 			</div>
 		</div> <!-- end flex-container -->
 
@@ -91,21 +91,22 @@
 				<label>Page Title:&nbsp;</label>
 				<input id="editPageTitle" type="text"/>
 				<label>Background Color:&nbsp;</label>
-				<select id="backgroundColor" onchange="changeSampleColor( this.value)">
-					<option value="lavender">lavender</option>
-					<option value="lemonchiffon">lemonchiffon</option>
-					<option value="lightblue">lightblue</option>
-					<option value="lightcoral">lightcoral</option>
-					<option value="lightgray">lightgray</option>
-					<option value="lightgreen">lightgreen</option>
-					<option value="lightpink">lightpink</option>
-					<option value="lightsalmon">lightsalmon</option>
-					<option value="lightseagreen">lightseagreen</option>
-					<option value="lightskyblue">lightskyblue</option>
-					<option value="lightsteelblue">lightsteelblue</option>
-					<option value="lightyellow">lightyellow</option>
-				</select>
-				<span id="colorSample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+				<input type="color" id="backgroundColor"/>
+				<!-- <select id="backgroundColor" onchange="changeSampleColor( this.value)"> -->
+					<!-- <option value="lavender">lavender</option> -->
+					<!-- <option value="lemonchiffon">lemonchiffon</option> -->
+					<!-- <option value="lightblue">lightblue</option> -->
+					<!-- <option value="lightcoral">lightcoral</option> -->
+					<!-- <option value="lightgray">lightgray</option> -->
+					<!-- <option value="lightgreen">lightgreen</option> -->
+					<!-- <option value="lightpink">lightpink</option> -->
+					<!-- <option value="lightsalmon">lightsalmon</option> -->
+					<!-- <option value="lightseagreen">lightseagreen</option> -->
+					<!-- <option value="lightskyblue">lightskyblue</option> -->
+					<!-- <option value="lightsteelblue">lightsteelblue</option> -->
+					<!-- <option value="lightyellow">lightyellow</option> -->
+				<!-- </select> -->
+				<!-- <span id="colorSample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
 				&nbsp;&nbsp;
 				<input id="resetDefaultData" type="button" value="Reset to Default Data" title="Remove all saved page information and set to defaults." onclick="resetDefaultData();" />
 
@@ -155,7 +156,7 @@
 					</p>
 
 					<label for="freeMargin">Account Balance:</label>
-					<input id="freeMargin" type="number" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
+					<input id="freeMargin" type="number" step=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
 					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
 					<br/>
 
@@ -164,7 +165,7 @@
 					<br/>
 	
 					<label for="riskPct">Balance Risk Percent:</label>
-					<input id="riskPct" type="number" value="2" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
+					<input id="riskPct" type="number" value="2" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
 					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking with a trade.">
 					<span id="riskAmt"></span>
 					<br>
@@ -184,7 +185,7 @@
 					<br/>
 
 					<label for="pipValue">Pip Dollar Value:</label>
-					<input id="pipValue" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
+					<input id="pipValue" type="number" step=".01" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizeAcctRisk()"/>
 					<br/>
 
 					<label for="calculatedLot">Lot Size:</label>
@@ -208,18 +209,14 @@
 					<br>
 
 					<label for="freeMarginPOA">Account balance:</label>
-					<input id="freeMarginPOA" type="number" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
+					<input id="freeMarginPOA" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
 					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
 					<br/>
 		
 					<label for="acctPctPOA">Balance Risk Percent:</label>
-					<input id="acctPctPOA" type="number" value="1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
+					<input id="acctPctPOA" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcLotSizePOA()"/>
 					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking on a trade at 10 pip stop.">
 					<span id="riskAmtPOA"></span>
-					<br>
-
-					<label for="calculatedLotPOA">Lot Size:</label>
-					<b style="background-color: yellow;"><span id="calculatedLotPOA"></span></b>
 					<br>
 
 					<label>Quote Currency:&nbsp;</label>
@@ -237,7 +234,11 @@
 					<br/>
 
 					<label for="pipValuePOA">Pip Dollar Value:</label>
-					<input id="pipValuePOA" type="number" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcProfitPipsPOA()"/>
+					<input id="pipValuePOA" type="number" step=".01" value="10" step=".01" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcProfitPipsPOA()"/>
+					<br>
+
+					<label for="calculatedLotPOA">Lot Size:</label>
+					<b style="background-color: yellow;"><span id="calculatedLotPOA"></span></b>
 					<br>
 
 					<label for="profitGoalPctPOA">Daily Profit Goal Percent:</label>
@@ -263,10 +264,10 @@
 					</select>
 					<br>
 					<label for="firstEntry">First Trade Entry Price:</label>
-					<input type="number" id="firstEntry" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPriceAvg()"/>
+					<input type="number" id="firstEntry" step=".00001" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPriceAvg()"/>
 					<br>
 					<label for="avgEntry">Price Average Entry Price:</label>
-					<input type="number" id="avgEntry" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPriceAvg()"/>
+					<input type="number" id="avgEntry" step=".00001" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPriceAvg()"/>
 					<br>
 					<label for="paProfit">Desired Profit (pips):</label>
 					<input type="number" id="paDesiredPips" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPriceAvg()"/>
@@ -281,6 +282,45 @@
 					<span id="takeProfit" style='background-color: yellow;'></span>
 					<br>
 					<input type="button" value="Calculate" onclick="calcPriceAvg()"/>
+
+				</div>
+
+<!-- Calculate the lot size based on the percent of account for all quote currencies. Display in a table -->
+				<div class="flex-calculator">
+					<h4>Lot Size List</h4>
+					Display list of lot sizes.
+					<br>
+
+					<label for="freeMargin3">Account balance:</label>
+					<input id="freeMargin3" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable()"/>
+					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
+					<br/>
+		
+					<label for="acctPct3">Balance Risk Percent:</label>
+					<input id="acctPct3" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable()" onchange="calcPipValueTable()"/>
+					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking on a trade at 10 pip stop.">
+					<span id="riskAmt3"></span>
+					<br>
+					<br>
+
+					<table class="table-striped table-hover table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Quote Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable'>
+							
+						</tbody>
+					</table>
 
 				</div>
 			</div>
