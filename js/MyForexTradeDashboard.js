@@ -258,8 +258,15 @@ function toggleEdit() {
 		div.classList.value = 'editHide';
 		div = document.getElementById( "calculators");
 		div.classList.value = 'editHide';
-
+		div = document.getElementById( "cancelEdit");
+		div.classList.remove('editHide');
 	} else {
+		removeEdit();
+		saveContent();
+	}
+}
+
+function removeEdit() {
 		$("#toggleEdit").val( "Edit Content");
 		let temp = document.getElementById('editPageTitleDiv').classList;
 		temp.add( 'editHide');
@@ -271,8 +278,8 @@ function toggleEdit() {
 		div.classList.value = 'flex-container';
 		div = document.getElementById( "calculators");
 		div.classList.value = 'flex-container';
-		saveContent();
-	}
+		div = document.getElementById( "cancelEdit");
+		div.classList.value = 'editHide';
 }
 
 function saveContent() {
@@ -497,4 +504,49 @@ function getCurrencyConversion( quotePair, pipID, rateID) {
 	} else {
 		calcLotSizeAcctRisk();
 	}
+}
+
+function calcPipValueTable() {
+	var table = document.getElementById( "pipValueTable");
+  
+  var rowCount = table.rows.length;
+  for ( var r = rowCount-1; r >= 0; r--) {
+  	table.deleteRow(r);
+  }
+
+  var qc = ['AUD','CAD','CHF','EUR','GBP','JPY','NZD','USD']
+ 	checkForNewRates();
+	var freeMargin = $('#freeMargin3').val();
+
+  for(var i = 0; i < qc.length; i++) {
+		var acctPct = $("#acctPct3").val() * .01;
+		var acctAmt = (freeMargin * acctPct).toFixed(2);
+	  let exchangeRate = currencyConversions[ qc[i]];
+		let pipValue;
+		if (qc[i] == 'JPY') {
+			pipValue = (1000 / exchangeRate).toFixed(2);
+		} else {
+			pipValue = (10 / exchangeRate).toFixed(2);
+		}
+
+		if (qc[i] == 'USD') {
+			exchangeRate = 1;
+			pipValue = 10;
+		}
+		if (freeMargin > 0 && acctPct > 0) {
+			var lotSize = (freeMargin * acctPct) / (10 * pipValue);
+		} else {
+			lotSize = 0;
+		}
+
+		let rowCount = table.rows.length;
+    let row = table.insertRow(rowCount);
+
+    let cell = row.insertCell(0);
+    cell.innerHTML = qc[i];
+    cell = row.insertCell(1); // pip value
+		cell.innerHTML = pipValue;
+    cell = row.insertCell(2); // lot size
+    cell.innerHTML = lotSize.toFixed(2);
+  } // for
 }
