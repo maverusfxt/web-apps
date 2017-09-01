@@ -1,0 +1,280 @@
+<!-- Fixed width (centered) container using Bootstrap -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Calculator Mini Page</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<!-- <script src='miniCalc.js'></script> -->
+		<script>
+			/*
+				Mini lot size calculator suitable for a phone
+			*/
+
+			$(document).ready( function () {
+				currencyConversions = getAllConversions();
+			});
+
+			function getAllConversions() {
+				// Save the date & time of when rates were retrieved.
+				currencyDate = new Date();
+				// Build a list of sybols from the select list.
+				var quotePairs = [];
+				let opts = ['AUD','CAD','CHF','GBP','JPY','NZD','USD'];
+
+				// Call the api to get the conversion rates
+				var uri = 'http://api.fixer.io/latest?base=USD&symbols=' + opts.toString();
+				var request = new XMLHttpRequest();
+				request.open("GET", uri);
+				request.onload = function() {
+					if(request.status == 200) {
+						currencyConversions = JSON.parse( request.responseText).rates;
+						calcPipValueTable( 'pipValueTable1', 'freeMargin1', 'acctPct1' );
+						calcPipValueTable( 'pipValueTable2', 'freeMargin2', 'acctPct2' );
+						calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' );
+					}
+				}
+				request.send(null);
+			}
+
+			function checkForNewRates() {
+				// If it has been more than 6 hours since the last exchange rate get, update it.
+				if (currencyDate.getDate() !== new Date().getDate()
+					|| new Date().getHours() - currencyDate.getHours() >= 6) {
+					getAllConversions();
+				}
+			}
+
+			function getCurrencyConversion( quotePair, pipID, rateID) {
+				checkForNewRates();
+				if (quotePair == 'USD') {
+					document.getElementById(pipID).value = 10;
+					if (pipID === 'pipValuePOA') {
+						calcLotSizePOA();
+					} else {
+						calcLotSizeAcctRisk();
+					}
+					document.getElementById( rateID).innerHTML = '1.00';
+					return;
+				}
+
+				let exchangeRate = currencyConversions[quotePair];
+				document.getElementById( rateID).innerHTML = exchangeRate;
+				if (quotePair == 'JPY') {
+					document.getElementById(pipID).value = (1000 / exchangeRate).toFixed(2);
+				} else {
+					document.getElementById(pipID).value = (10 / exchangeRate).toFixed(2);
+				}
+				if (pipID === 'pipValuePOA') {
+					calcLotSizePOA();
+				} else {
+					calcLotSizeAcctRisk();
+				}
+			}
+
+			function calcPipValueTable( tableID, amtID, pctID) {
+				var table = document.getElementById( tableID);
+				
+				var rowCount = table.rows.length;
+				for ( var r = rowCount-1; r >= 0; r--) {
+					table.deleteRow(r);
+				}
+
+				var qc = ['AUD','CAD','CHF','GBP','JPY','NZD','USD']
+				checkForNewRates();
+				var freeMargin = $( '#' + amtID).val();
+
+				for(var i = 0; i < qc.length; i++) {
+					var acctPct = $( '#' + pctID).val() * .01;
+					var acctAmt = (freeMargin * acctPct).toFixed(2);
+					let exchangeRate = currencyConversions[ qc[i]];
+					let pipValue;
+					if (qc[i] == 'JPY') {
+						pipValue = (1000 / exchangeRate).toFixed(2);
+					} else {
+						pipValue = (10 / exchangeRate).toFixed(2);
+					}
+
+					if (qc[i] == 'USD') {
+						exchangeRate = 1;
+						pipValue = 10;
+					}
+					if (freeMargin > 0 && acctPct > 0) {
+						var lotSize = (freeMargin * acctPct) / (10 * pipValue);
+					} else {
+						lotSize = 0;
+					}
+					let rowCount = table.rows.length;
+					let row = table.insertRow(rowCount);
+
+					let cell = row.insertCell(0);
+					cell.innerHTML = qc[i];
+					cell.style = "padding-right: 3px;"
+					cell = row.insertCell(1); // pip value
+					cell.innerHTML = pipValue;
+					cell.style = "text-align: right; padding-right: 3px;"
+					cell = row.insertCell(2); // lot size
+					cell.innerHTML = lotSize.toFixed(2);
+					cell.style = "text-align: right; padding-right: 3px;"
+				} // for
+			}
+		</script>
+	
+		<style>
+			.calculator {
+				width: 280px; 
+				height: 250px;
+				margin: 5px 5px 5px 5px;
+				padding: 3px;
+				border: 3px solid gray;
+			}
+			th {
+				padding-left: 3px;
+				padding-right: 5px;
+			}
+		</style>
+
+	</head>
+	<body>
+
+<!-- 		<nav class="navbar navbar-default">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Calc Mini Page</a>
+				</div>
+				<div>
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#">Link 1</a></li>
+						<li><a href="#">Link 2</a></li>
+						<li><a href="#">Link 3</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+ -->
+		<h4 style="margin-left: 5px">Lot Size Calculators</h4>
+		<div class="container calculator">
+			<div class="row">
+			<div class="col-xs-12">
+					<label for="freeMargin1">Account balance:</label>
+					<input id="freeMargin1" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable1', 'freeMargin1', 'acctPct1' )"/>
+				</div>
+			</div>
+		
+			<div class="row">
+				<div class="col-xs-12">
+					<label for="acctPct1">Balance Risk Percent:</label>
+					<input id="acctPct1" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable1', 'freeMargin1', 'acctPct1' )" onchange="calcPipValueTable( 'pipValueTable1', 'freeMargin1', 'acctPct1' )"/>
+					<span id="riskAmt1"></span>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-striped table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable1'>
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="container calculator">
+			<div class="row">
+				<div class="col-xs-12">
+					<label for="freeMargin2">Account balance:</label>
+					<input id="freeMargin2" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable2', 'freeMargin2', 'acctPct2' )"/>
+				</div>
+			</div>
+		
+			<div class="row">
+				<div class="col-xs-12">
+					<label for="acctPct2">Balance Risk Percent:</label>
+					<input id="acctPct2" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable2', 'freeMargin2', 'acctPct2' )" onchange="calcPipValueTable( 'pipValueTable2', 'freeMargin2', 'acctPct2' )"/>
+					<span id="riskAmt2"></span>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-striped table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable2'>
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="container calculator">
+			<div class="row">
+				<div class="col-xs-12">
+					<label for="freeMargin3">Account balance:</label>
+					<input id="freeMargin3" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' )"/>
+				</div>
+			</div>
+		
+			<div class="row">
+				<div class="col-xs-12">
+					<label for="acctPct3">Balance Risk Percent:</label>
+					<input id="acctPct3" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' )" onchange="calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' )"/>
+					<span id="riskAmt3"></span>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12">
+					<table class="table-striped table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable3'>
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
