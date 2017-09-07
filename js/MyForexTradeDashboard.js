@@ -506,8 +506,8 @@ function getCurrencyConversion( quotePair, pipID, rateID) {
 	}
 }
 
-function calcPipValueTable() {
-	var table = document.getElementById( "pipValueTable");
+function calcPipValueTable( tableID, amtID, pctID) {
+	var table = document.getElementById( tableID);
   
   var rowCount = table.rows.length;
   for ( var r = rowCount-1; r >= 0; r--) {
@@ -516,10 +516,10 @@ function calcPipValueTable() {
 
   var qc = ['AUD','CAD','CHF','EUR','GBP','JPY','NZD','USD']
  	checkForNewRates();
-	var freeMargin = $('#freeMargin3').val();
+	var freeMargin = $( '#' + amtID).val();
 
   for(var i = 0; i < qc.length; i++) {
-		var acctPct = $("#acctPct3").val() * .01;
+		var acctPct = $( '#' + pctID).val() * .01;
 		var acctAmt = (freeMargin * acctPct).toFixed(2);
 	  let exchangeRate = currencyConversions[ qc[i]];
 		let pipValue;
@@ -549,4 +549,8 @@ function calcPipValueTable() {
     cell = row.insertCell(2); // lot size
     cell.innerHTML = lotSize.toFixed(2);
   } // for
+}
+
+function launchLotSizePage() {
+	window.open('CalcMiniPage.html','','height=700,width=325');
 }

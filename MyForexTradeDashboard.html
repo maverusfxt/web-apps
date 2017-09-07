@@ -11,6 +11,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>My FOREX Dashboard - Dynamic</title>
+	<link rel="shortcut icon" href="img/FXDashboard2.png" type="image/x-icon">
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="js/MyForexTradeDashboard.js"></script>
@@ -48,7 +49,7 @@
 		}
 		.flex-calculator {
 	     width: 325px; 
-	    /* height: 15px; */
+	    height: 400px;
 	    /*background-color:l ightgreen;*/
 	    margin: 5px 5px 5px 5px;
 	    padding: 3px;
@@ -145,6 +146,11 @@
 			<div class="flex-container" id='calculatorHeading'>
 				<div class="flex-item">
 					<h3>Calculators</h3>
+				</div>
+			</div>
+			<div class="flex-container" id='calculatorHeading'>
+				<div class="flex-item">
+					<input type="button" value="Display Currency Lot Size Calulators" onclick="launchLotSizePage()"/>
 				</div>
 			</div>
 
@@ -286,18 +292,17 @@
 				</div>
 
 <!-- Calculate the lot size based on the percent of account for all quote currencies. Display in a table -->
-				<div class="flex-calculator">
+<!-- 				<div class="flex-calculator">
 					<h4>Lot Size List</h4>
 					Display list of lot sizes.
 					<br>
 
 					<label for="freeMargin3">Account balance:</label>
-					<input id="freeMargin3" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable()"/>
+					<input id="freeMargin3" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' )"/>
 					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
 					<br/>
-		
 					<label for="acctPct3">Balance Risk Percent:</label>
-					<input id="acctPct3" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable()" onchange="calcPipValueTable()"/>
+					<input id="acctPct3" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' )" onchange="calcPipValueTable( 'pipValueTable3', 'freeMargin3', 'acctPct3' )"/>
 					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking on a trade at 10 pip stop.">
 					<span id="riskAmt3"></span>
 					<br>
@@ -317,13 +322,131 @@
 								</th>
 							</tr>
 						</thead>
-						<tbody id='pipValueTable'>
+						<tbody id='pipValueTable3'>
 							
 						</tbody>
 					</table>
 
 				</div>
-			</div>
+			</div> -->
+
+<!-- Lot Size List Calculators -->
+<!-- 			<div class="flex-container" id="calculators">
+				<div class="flex-calculator">
+					<h4>Lot Size List</h4>
+					Display list of lot sizes.
+					<br>
+
+					<label for="freeMargin4">Account balance:</label>
+					<input id="freeMargin4" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable4', 'freeMargin4', 'acctPct4' )"/>
+					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
+					<br/>
+		
+					<label for="acctPct4">Balance Risk Percent:</label>
+					<input id="acctPct4" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable4', 'freeMargin4', 'acctPct4' )" onchange="calcPipValueTable( 'pipValueTable4', 'freeMargin4', 'acctPct4' )"/>
+					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking on a trade at 10 pip stop.">
+					<span id="riskAmt4"></span>
+					<br>
+					<br>
+
+					<table class="table-striped table-hover table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Quote Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable4'>
+							
+						</tbody>
+					</table>
+
+				</div> -->
+			
+<!-- 				<div class="flex-calculator">
+					<h4>Lot Size List</h4>
+					Display list of lot sizes.
+					<br>
+
+					<label for="freeMargin5">Account balance:</label>
+					<input id="freeMargin5" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable5', 'freeMargin5', 'acctPct5' )"/>
+					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
+					<br/>
+		
+					<label for="acctPct5">Balance Risk Percent:</label>
+					<input id="acctPct5" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable5', 'freeMargin5', 'acctPct5' )" onchange="calcPipValueTable( 'pipValueTable5', 'freeMargin5', 'acctPct5' )"/>
+					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking on a trade at 10 pip stop.">
+					<span id="riskAmt5"></span>
+					<br>
+					<br>
+
+					<table class="table-striped table-hover table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Quote Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable5'>
+							
+						</tbody>
+					</table>
+
+				</div>		
+ -->
+<!-- 				<div class="flex-calculator">
+					<h4>Lot Size List</h4>
+					Display list of lot sizes.
+					<br>
+
+					<label for="freeMargin6">Account balance:</label>
+					<input id="freeMargin6" type="number" step=".01" multiple=".01" style="width: 7em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable6', 'freeMargin6', 'acctPct6' )"/>
+					<img src="img/questionMark.png" alt="Help" title="Enter the Balance (not recommended), Equity, or Free Margin of your account here. You choose.">
+					<br/>
+		
+					<label for="acctPct6">Balance Risk Percent:</label>
+					<input id="acctPct6" type="number" value="1" step=".1" style="width: 4em; text-align: right; margin-top: 4px;" onblur="calcPipValueTable( 'pipValueTable6', 'freeMargin6', 'acctPct6' )" onchange="calcPipValueTable( 'pipValueTable6', 'freeMargin6', 'acctPct6' )"/>
+					<img src="img/questionMark.png" alt="Help" title="This is the percentage of your account balance you are risking on a trade at 10 pip stop.">
+					<span id="riskAmt6"></span>
+					<br>
+					<br>
+
+					<table class="table-striped table-hover table-bordered" style="margin-left: 20px">
+						<thead>
+							<tr>
+								<th>
+									Quote Currency
+								</th>
+								<th>
+									Pip $ Value
+								</th>
+								<th>
+									Lot Size
+								</th>
+							</tr>
+						</thead>
+						<tbody id='pipValueTable6'>
+							
+						</tbody>
+					</table>
+
+				</div>		
+			</div> -->
+		<!-- </div> -->
 
 		<br>
 		<br>
