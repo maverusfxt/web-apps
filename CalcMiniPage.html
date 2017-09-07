@@ -3,6 +3,7 @@
 <html lang="en">
 	<head>
 		<title>Calculator Mini Page</title>
+		<link rel="shortcut icon" href="img/FXDashboard2.png" type="image/x-icon">
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -16,6 +17,7 @@
 
 			$(document).ready( function () {
 				currencyConversions = getAllConversions();
+				getBalances();
 			});
 
 			function getAllConversions() {
@@ -111,7 +113,7 @@
 					let row = table.insertRow(rowCount);
 
 					let cell = row.insertCell(0);
-					cell.innerHTML = qc[i];
+					cell.innerHTML = qc[i] + '<small> (' + exchangeRate + ')</small>';
 					cell.style = "padding-right: 3px;"
 					cell = row.insertCell(1); // pip value
 					cell.innerHTML = pipValue;
@@ -120,6 +122,29 @@
 					cell.innerHTML = lotSize.toFixed(2);
 					cell.style = "text-align: right; padding-right: 3px;"
 				} // for
+			}
+
+			function getBalances() {
+				var dta = JSON.parse( localStorage.getItem( 'calcAccts'));
+				if (dta === null) {
+					dta = [{amount:0, percent:1},
+									{amount:0, percent:1},
+									{amount:0, percent:1}];
+				}
+				for (var x = 0; x<=2; x++) {
+					document.getElementById('freeMargin'+(x+1)).value = dta[x].amount;
+					document.getElementById('acctPct'+ (x+1)).value = dta[x].percent;
+				}
+			}
+			function saveBalances() {
+				var dta = [];
+				for (var x = 0; x<=2; x++) {
+					var obj = {};
+					obj.amount = document.getElementById('freeMargin'+ (x+1)).value;
+					obj.percent = document.getElementById('acctPct'+ (x+1)).value;
+					dta.push( obj)
+				}
+				localStorage.setItem( 'calcAccts', JSON.stringify( dta));
 			}
 		</script>
 	
@@ -156,7 +181,10 @@
 			</div>
 		</nav>
  -->
-		<h4 style="margin-left: 5px">Lot Size Calculators</h4>
+		<h4 style="margin-left: 5px">
+			Lot Size Calculators
+			<input type="button" value="Save Balances" onclick="saveBalances();" style="float: right; margin-right: 10px; font-size: 13px;">
+		</h4>
 		<div class="container calculator">
 			<div class="row">
 			<div class="col-xs-12">
